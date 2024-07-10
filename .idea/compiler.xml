@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="MotleyFoolScraper" />
+        <module name="OpenCV" />
         <module name="Scraper" />
       </profile>
     </annotationProcessing>
