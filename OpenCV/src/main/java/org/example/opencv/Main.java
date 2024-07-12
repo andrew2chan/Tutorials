@@ -1,13 +1,14 @@
 package org.example.opencv;
 
-import org.bytedeco.opencv.opencv_core.Mat;
-import org.bytedeco.opencv.opencv_core.Size;
+import org.bytedeco.javacpp.DoublePointer;
+import org.bytedeco.opencv.opencv_core.*;
 
-import java.net.URL;
-
+import static org.bytedeco.opencv.global.opencv_core.CV_32FC1;
+import static org.bytedeco.opencv.global.opencv_core.minMaxLoc;
+import static org.bytedeco.opencv.global.opencv_highgui.*;
+import static org.bytedeco.opencv.global.opencv_imgcodecs.IMREAD_GRAYSCALE;
 import static org.bytedeco.opencv.global.opencv_imgcodecs.imread;
-import static org.bytedeco.opencv.global.opencv_imgcodecs.imwrite;
-import static org.bytedeco.opencv.global.opencv_imgproc.GaussianBlur;
+import static org.bytedeco.opencv.global.opencv_imgproc.*;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
@@ -15,29 +16,33 @@ public class Main {
     public static void main(String[] args) {
         Main m = new Main();
 
-        m.doStuff("tree.jpg");
+        m.doStuff();
     }
 
-    private void doStuff(String fileName) {
-        URL resourceURL = getClass().getResource("/" + fileName);
-        if (resourceURL == null) {
-            throw new NullPointerException("Resource not found: " + fileName);
-        }
+    private void doStuff() {
+        Mat img = imread(getClass().getResource("/image.jpg").getPath().substring(1), IMREAD_GRAYSCALE);
+        Mat template = imread(getClass().getResource("/explore.jpg").getPath().substring(1), IMREAD_GRAYSCALE);
 
-        String imagePath = resourceURL.getPath().substring(1);
-        Mat image = imread(imagePath);
+        final int[] methods = {TM_CCOEFF, TM_CCOEFF_NORMED, TM_CCORR, TM_CCORR_NORMED, TM_SQDIFF, TM_SQDIFF_NORMED};
 
-        // Check if the image was successfully loaded
-        if (image != null && !image.empty()) {
-            // Apply Gaussian blur
-            GaussianBlur(image, image, new Size(3, 3), 0);
+        for(int m : methods) {
+            Mat img2 = img.clone();
 
-            // Save processed image to a specific location
-            String outputFileName = "processed_tree.jpg";
-            imwrite(outputFileName, image);
-            System.out.println("Processed image saved to: " + outputFileName);
-        } else {
-            System.out.println("Failed to load image: " + fileName);
+            Size size = new Size(img2.cols() - template.cols() + 1, img2.rows() - template.rows() + 1);
+            Mat result = new Mat(size, CV_32FC1);
+
+            matchTemplate(img2, template, result, m);
+
+            DoublePointer minVal = new DoublePointer();
+            DoublePointer maxVal = new DoublePointer();
+            Point min = new Point();
+            Point max = new Point();
+            minMaxLoc(result, minVal, maxVal, min, max, null);
+            rectangle(img2, new Rect(max.x(), max.y(), template.cols(), template.rows()), new Scalar(255,255,255,1), 2, 0, 0);
+
+            imshow("Match", img2);
+            waitKey(0);
+            destroyAllWindows();
         }
     }
 }
