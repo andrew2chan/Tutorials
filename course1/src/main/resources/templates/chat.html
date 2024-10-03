@@ -13,4 +13,4 @@
     </select>
     <input type="submit">
 </form>
-<h1 th:each="msg : ${messageList}" th:text="${msg.showMessage()}"/>
+<h1 th:each="msg : ${messageList}" th:text="${msg.showMessage()}" class="messages" />
