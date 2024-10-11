@@ -2,6 +2,8 @@ package com.test.secondlesson.controllers;
 
 import com.test.secondlesson.exceptions.DogNotFoundException;
 import com.test.secondlesson.service.DogService;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +27,10 @@ public class DogController {
     }
 
     @GetMapping("/retrieveById/{id}")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "All good in the hood"),
+            @ApiResponse(responseCode = "404", description = "The id ain't good")
+    })
     public ResponseEntity<String> retrieveDogBreedById(@PathVariable Long id) {
         try {
             return new ResponseEntity<>(dogService.retrieveDogBreedById(id), HttpStatus.OK);
