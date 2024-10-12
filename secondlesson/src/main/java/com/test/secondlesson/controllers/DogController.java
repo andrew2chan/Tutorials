@@ -5,12 +5,14 @@ import com.test.secondlesson.service.DogService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.awt.*;
 import java.util.List;
 
 @RestController
@@ -26,7 +28,7 @@ public class DogController {
         return new ResponseEntity<>(dogService.retrieveDogBreed(), HttpStatus.OK);
     }
 
-    @GetMapping("/retrieveById/{id}")
+    @GetMapping(value = "/retrieveById/{id}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "All good in the hood"),
             @ApiResponse(responseCode = "404", description = "The id ain't good")
